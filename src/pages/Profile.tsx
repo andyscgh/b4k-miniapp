@@ -48,7 +48,7 @@ export default function Profile() {
       return
     }
 
-    await fetch('https://your-backend.com/api/employee', {
+    await fetch('https://b4k-backend-production.up.railway.app/api/employee', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ telegramUser, ...form })
