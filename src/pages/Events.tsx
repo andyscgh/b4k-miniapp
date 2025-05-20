@@ -1,1 +1,0 @@
-export default function Events() { return <h1>📅 Список событий</h1> }
