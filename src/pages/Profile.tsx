@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react'
 
 declare global {
@@ -7,15 +8,16 @@ declare global {
 }
 
 export default function Profile() {
+  const [profile, setProfile] = useState<any>(null)
   const [form, setForm] = useState({
     address: '',
     passport: '',
     inn: '',
     skills: [] as string[]
   })
-
+  const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [editMode, setEditMode] = useState(false)
 
   const skillsList = [
     'Режиссер',
@@ -30,6 +32,23 @@ export default function Profile() {
     'Инженер трансляции'
   ]
 
+  const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user
+
+  useEffect(() => {
+    if (!telegramUser?.id) return
+    fetch('https://b4k-backend-production.up.railway.app/api/employee?telegram_id=' + telegramUser.id)
+      .then(res => {
+        if (res.status === 404) {
+          setLoading(false)
+        } else {
+          return res.json().then(data => {
+            setProfile(data)
+            setLoading(false)
+          })
+        }
+      })
+  }, [])
+
   const toggleSkill = (skill: string) => {
     setForm(prev => ({
       ...prev,
@@ -41,12 +60,6 @@ export default function Profile() {
 
   const save = async () => {
     setLoading(true)
-    const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user
-
-    if (!telegramUser?.id) {
-      alert('Ошибка: Telegram не найден')
-      return
-    }
 
     await fetch('https://b4k-backend-production.up.railway.app/api/employee', {
       method: 'POST',
@@ -56,11 +69,27 @@ export default function Profile() {
 
     setSaved(true)
     setLoading(false)
+    location.reload()
   }
+
+  if (loading) return <p>Загрузка...</p>
+
+  if (profile && !editMode) return (
+    <div>
+      <h1>👋 Добро пожаловать, {profile.name}!</h1>
+      <p><b>Навыки:</b> {profile.skills.join(', ')}</p>
+      <button onClick={() => setEditMode(true)}>Редактировать</button>
+      <ul>
+        <li><a href="#/documents">📁 Документы</a></li>
+        <li><a href="#/invitations">📬 Приглашения</a></li>
+        <li><a href="#/events">📅 События</a></li>
+      </ul>
+    </div>
+  )
 
   return (
     <div>
-      <h1>👤 Профиль</h1>
+      <h1>👤 Регистрация</h1>
       <div>
         <label>Адрес:<br/>
           <input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
