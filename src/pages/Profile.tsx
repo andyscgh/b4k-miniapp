@@ -1,72 +1,47 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+type ProfileData = {
+  name: string
+  address: string
+  passport: string
+  inn: string
+  skills: string[]
+}
 
 export default function Profile() {
-  const [form, setForm] = useState({
-    name: '',
-    address: '',
-    passport: '',
-    inn: '',
-    skills: [] as string[],
-    agree: false,
-  })
+  const [profile, setProfile] = useState<ProfileData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const toggleSkill = (skill: string) => {
-    setForm(prev => ({
-      ...prev,
-      skills: prev.skills.includes(skill)
-        ? prev.skills.filter(s => s !== skill)
-        : [...prev.skills, skill],
-    }))
-  }
+  useEffect(() => {
+    const userId = (window.Telegram.WebApp.initDataUnsafe?.user?.id ?? '').toString()
+    if (!userId) return
+
+    fetch(`https://your-backend.com/api/employee?telegram_id=${userId}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Not found')
+        return res.json()
+      })
+      .then(data => {
+        setProfile(data)
+        setLoading(false)
+      })
+      .catch(() => {
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) return <p>Загрузка...</p>
+
+  if (!profile) return <p>Вы не зарегистрированы в системе.</p>
 
   return (
     <div>
       <h1>👤 Профиль сотрудника</h1>
-      <div>
-        <label>ФИО:<br/>
-          <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-        </label>
-      </div>
-      <div>
-        <label>Адрес регистрации:<br/>
-          <input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
-        </label>
-      </div>
-      <div>
-        <label>Паспорт:<br/>
-          <input value={form.passport} onChange={e => setForm({ ...form, passport: e.target.value })} />
-        </label>
-      </div>
-      <div>
-        <label>ИНН:<br/>
-          <input value={form.inn} onChange={e => setForm({ ...form, inn: e.target.value })} />
-        </label>
-      </div>
-      <div>
-        <label>Навыки:<br/>
-          {['свет', 'звук', 'организация', 'ведение'].map(skill => (
-            <label key={skill} style={{ marginRight: 10 }}>
-              <input
-                type="checkbox"
-                checked={form.skills.includes(skill)}
-                onChange={() => toggleSkill(skill)}
-              />
-              {skill}
-            </label>
-          ))}
-        </label>
-      </div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={form.agree}
-            onChange={e => setForm({ ...form, agree: e.target.checked })}
-          />
-          Согласен на обработку персональных данных
-        </label>
-      </div>
-      <button onClick={() => alert('Профиль сохранён!')}>Сохранить</button>
+      <p><b>ФИО:</b> {profile.name}</p>
+      <p><b>Адрес:</b> {profile.address}</p>
+      <p><b>Паспорт:</b> {profile.passport}</p>
+      <p><b>ИНН:</b> {profile.inn}</p>
+      <p><b>Навыки:</b> {profile.skills.join(', ')}</p>
     </div>
   )
 }
