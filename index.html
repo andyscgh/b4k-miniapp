@@ -1,13 +1,715 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>B4K Mini App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B4K Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3f37c9',
+                        accent: '#4895ef',
+                        danger: '#f72585',
+                        success: '#4cc9f0',
+                        background: '#f8f9fa',
+                        dark: '#212529'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Hide scrollbar but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .floating-action-button {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .event-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 12px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background">
+    <!-- Main App Container -->
+    <div class="min-h-screen max-w-md mx-auto bg-white shadow-sm">
+        <!-- App Header -->
+        <header class="sticky top-0 z-50 bg-gradient-to-r from-primary to-secondary text-white shadow-md">
+            <div class="flex items-center justify-between p-4">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3">
+                        <span class="text-primary text-xl font-bold">B4K</span>
+                    </div>
+                    <h1 class="text-xl font-semibold">Сотрудники B4K</h1>
+                </div>
+                <div class="flex items-center">
+                    <button class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-2">
+                        <i class="fas fa-bell text-white"></i>
+                        <span class="absolute top-2 right-11 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <button id="menuButton" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-ellipsis-v text-white"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <nav class="flex justify-around mt-2">
+                <button data-target="home" class="tab-button py-3 px-2 font-medium text-sm border-b-2 border-transparent text-white/70 transition-all duration-300 hover:text-white active-tab">Главная</button>
+                <button data-target="events" class="tab-button py-3 px-2 font-medium text-sm border-b-2 border-transparent text-white/70 transition-all duration-300 hover:text-white">События</button>
+                <button data-target="invites" class="tab-button py-3 px-2 font-medium text-sm border-b-2 border-transparent text-white/70 transition-all duration-300 hover:text-white">Приглашения</button>
+                <button data-target="docs" class="tab-button py-3 px-2 font-medium text-sm border-b-2 border-transparent text-white/70 transition-all duration-300 hover:text-white">Документы</button>
+            </nav>
+        </header>
+
+        <!-- Main Content Sections -->
+        <main class="pb-24 no-scrollbar" style="max-height: calc(100vh - 136px); overflow-y: auto;">
+            <!-- Home Section -->
+            <section id="home" class="section active p-5">
+                <div class="mt-3 mb-6">
+                    <h2 class="text-2xl font-bold text-dark">Доброе утро, Алексей!</h2>
+                    <p class="text-gray-600 mt-1">Сегодня 5 июня 2023 года</p>
+                </div>
+                
+                <div class="bg-gradient-to-r from-primary/10 to-accent/10 p-4 rounded-xl border border-primary/20">
+                    <h3 class="text-center font-bold text-primary text-lg">Ваша активность сегодня</h3>
+                    <div class="flex justify-between mt-4 text-center">
+                        <div class="w-1/3">
+                            <div class="text-2xl font-bold text-primary">2</div>
+                            <div class="text-gray-700 text-sm mt-1">События</div>
+                        </div>
+                        <div class="w-1/3 border-l border-r border-primary/20">
+                            <div class="text-2xl font-bold text-accent">1</div>
+                            <div class="text-gray-700 text-sm mt-1">Приглашения</div>
+                        </div>
+                        <div class="w-1/3">
+                            <div class="text-2xl font-bold text-success">3</div>
+                            <div class="text-gray-700 text-sm mt-1">Документа</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="section-title text-xl font-bold text-dark mb-4">Предстоящие события</h3>
+                    <div class="event-card bg-white rounded-xl p-4 shadow border border-gray-100">
+                        <div class="flex items-start">
+                            <div class="bg-primary/10 p-3 rounded-lg text-primary mr-3">
+                                <i class="fas fa-film text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800">Вебинар "Новые подходы к видеопроизводству"</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-2">
+                                    <i class="far fa-calendar mr-2"></i>
+                                    <span>8 июня 2023, 14:00</span>
+                                </div>
+                                <div class="flex mt-3">
+                                    <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-xs">Участие подтверждено</span>
+                                    <span class="bg-success/10 text-success px-3 py-1 rounded-full text-xs ml-2">Онлайн</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="event-card bg-white rounded-xl p-4 shadow border border-gray-100 mt-4">
+                        <div class="flex items-start">
+                            <div class="bg-primary/10 p-3 rounded-lg text-primary mr-3">
+                                <i class="fas fa-camera text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800">Съёмка корпоративного мероприятия</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-2">
+                                    <i class="far fa-calendar mr-2"></i>
+                                    <span>12 июня 2023, 10:00</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>
+                                    <span>Офис B4K, Москва</span>
+                                </div>
+                                <div class="flex mt-3">
+                                    <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">Ожидает подтверждения</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="section-title text-xl font-bold text-dark mb-4">Свежие документы</h3>
+                    <div class="bg-white rounded-xl p-4 shadow border border-gray-100">
+                        <div class="flex items-start">
+                            <div class="bg-primary/10 p-3 rounded-lg text-primary mr-3">
+                                <i class="far fa-file-pdf text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800">Договор о сотрудничестве</h4>
+                                <p class="text-sm text-gray-600 mt-1">Сгенерирован: 3 июня 2023</p>
+                                <div class="flex mt-3">
+                                    <button class="flex items-center text-primary">
+                                        <i class="fas fa-eye mr-1"></i>
+                                        <span>Просмотреть</span>
+                                    </button>
+                                    <button class="flex items-center text-gray-600 ml-5">
+                                        <i class="fas fa-download mr-1"></i>
+                                        <span>Скачать</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Events Section -->
+            <section id="events" class="section hidden p-5">
+                <div class="mt-2 mb-6">
+                    <h2 class="text-2xl font-bold text-dark mb-1">Календарь событий</h2>
+                    <p class="text-gray-600">Ваши запланированные активности и мероприятия</p>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <h3 class="section-title text-xl font-bold text-dark after:bg-primary">Июнь 2023</h3>
+                    <div class="flex">
+                        <button class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white ml-2">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-7 gap-1 mt-4">
+                    <div class="text-center text-gray-600 py-2 text-sm">Пн</div>
+                    <div class="text-center text-gray-600 py-2 text-sm">Вт</div>
+                    <div class="text-center text-gray-600 py-2 text-sm">Ср</div>
+                    <div class="text-center text-gray-600 py-2 text-sm">Чт</div>
+                    <div class="text-center text-gray-600 py-2 text-sm">Пт</div>
+                    <div class="text-center text-gray-600 py-2 text-sm">Сб</div>
+                    <div class="text-center text-gray-600 py-2 text-sm">Вс</div>
+                    
+                    <!-- Calendar days -->
+                    <!-- Empty days -->
+                    <div class="text-center py-2"></div>
+                    <div class="text-center py-2"></div>
+                    <div class="text-center py-2"></div>
+                    
+                    <!-- Days with content -->
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">1</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">2</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg bg-primary/10">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full text-primary font-semibold">3</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">4</div>
+                    </div>
+                    
+                    <!-- Active days -->
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">5</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg bg-primary/10">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">6</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">7</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg bg-primary text-white">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full font-semibold">8</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">9</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">10</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">11</div>
+                    </div>
+                    
+                    <div class="text-center py-2 rounded-lg bg-danger/10">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full text-danger font-semibold">12</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">13</div>
+                    </div>
+                    <div class="text-center py-2 rounded-lg">
+                        <div class="mx-auto w-8 h-8 flex items-center justify-center rounded-full">14</div>
+                    </div>
+                </div>
+                
+                <h3 class="section-title text-xl font-bold text-dark mt-8 mb-4 after:bg-primary">Предстоящие события</h3>
+                
+                <div class="event-card bg-white rounded-xl p-4 shadow border border-gray-100">
+                    <div class="flex items-start">
+                        <div class="bg-primary/10 p-3 rounded-lg text-primary mr-3">
+                            <i class="fas fa-film text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800">Вебинар "Новые подходы к видеопроизводству"</h4>
+                            <div class="flex items-center text-sm text-gray-600 mt-2">
+                                <i class="far fa-calendar mr-2"></i>
+                                <span>8 июня 2023, 14:00 - 16:00</span>
+                            </div>
+                            <div class="flex mt-3">
+                                <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-xs">Подтверждено</span>
+                                <span class="bg-success/10 text-success px-3 py-1 rounded-full text-xs ml-2">Онлайн</span>
+                            </div>
+                            <button class="mt-4 flex items-center text-primary">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <span>Подробнее</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-card bg-white rounded-xl p-4 shadow border border-gray-100 mt-4">
+                    <div class="flex items-start">
+                        <div class="bg-danger/10 p-3 rounded-lg text-danger mr-3">
+                            <i class="fas fa-camera text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800">Съёмка корпоративного мероприятия</h4>
+                            <div class="flex items-center text-sm text-gray-600 mt-2">
+                                <i class="far fa-calendar mr-2"></i>
+                                <span>12 июня 2023, 10:00 - 17:00</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600 mt-1">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                <span>Офис B4K, Москва</span>
+                            </div>
+                            <div class="flex mt-3">
+                                <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">Ожидает подтверждения</span>
+                            </div>
+                            <div class="flex mt-4 space-x-2">
+                                <button class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-lg font-medium flex-1">
+                                    Подтвердить
+                                </button>
+                                <button class="bg-danger hover:bg-danger/90 text-white px-4 py-2 rounded-lg font-medium flex-1">
+                                    Отклонить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Invitations Section -->
+            <section id="invites" class="section hidden p-5">
+                <div class="mt-2 mb-6">
+                    <h2 class="text-2xl font-bold text-dark mb-1">Приглашения</h2>
+                    <p class="text-gray-600">Ваши приглашения на мероприятия и события</p>
+                </div>
+                
+                <div class="flex space-x-3 mb-4">
+                    <button class="px-4 py-2 bg-primary text-white rounded-lg flex-1 font-medium">
+                        Активные (3)
+                    </button>
+                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg flex-1 font-medium">
+                        Архив
+                    </button>
+                </div>
+                
+                <div class="event-card bg-white rounded-xl p-4 shadow border border-gray-100 mb-4">
+                    <div class="flex items-start">
+                        <div class="bg-danger/10 p-3 rounded-lg text-danger mr-3">
+                            <i class="fas fa-camera text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800">Съёмка корпоративного мероприятия</h4>
+                            <p class="text-sm text-gray-600 mt-2">Вас пригласили для съёмки корпоративного мероприятия компании B4K с последующей обработкой материала</p>
+                            <div class="mt-3 grid grid-cols-2 gap-2">
+                                <div class="flex items-center">
+                                    <i class="far fa-calendar text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">12 июня 2023</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="far fa-clock text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">10:00 - 17:00</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-tag text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">Видеооператор</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-ruble-sign text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">8 500 руб.</span>
+                                </div>
+                            </div>
+                            <div class="flex mt-5 space-x-2">
+                                <button class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-lg font-medium flex-1">
+                                    Подтвердить
+                                </button>
+                                <button class="bg-danger hover:bg-danger/90 text-white px-4 py-2 rounded-lg font-medium flex-1">
+                                    Отклонить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-card bg-white rounded-xl p-4 shadow border border-gray-100">
+                    <div class="flex items-start">
+                        <div class="bg-success/10 p-3 rounded-lg text-success mr-3">
+                            <i class="fas fa-video text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800">Монтаж промо-ролика</h4>
+                            <p class="text-sm text-gray-600 mt-2">Требуется монтажер для обработки 2 часов материала по итогам съёмки</p>
+                            <div class="mt-3 grid grid-cols-2 gap-2">
+                                <div class="flex items-center">
+                                    <i class="far fa-calendar text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">14 июня 2023</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="far fa-clock text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">Дедлайн: 18 июня</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-tag text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">Монтажер</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-ruble-sign text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">12 000 руб.</span>
+                                </div>
+                            </div>
+                            <div class="flex mt-5 space-x-2">
+                                <button class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-lg font-medium flex-1">
+                                    Подтвердить
+                                </button>
+                                <button class="bg-danger hover:bg-danger/90 text-white px-4 py-2 rounded-lg font-medium flex-1">
+                                    Отклонить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-card bg-white rounded-xl p-4 shadow border border-gray-100 mt-4">
+                    <div class="flex items-start">
+                        <div class="bg-primary/10 p-3 rounded-lg text-primary mr-3">
+                            <i class="fas fa-photo-video text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800">Создание рекламного ролика</h4>
+                            <p class="text-sm text-gray-600 mt-2">Съёмка и монтаж рекламного ролика для промо-кампании нового продукта</p>
+                            <div class="mt-3 grid grid-cols-2 gap-2">
+                                <div class="flex items-center">
+                                    <i class="far fa-calendar text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">20-25 июня</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-tag text-gray-500 mr-2"></i>
+                                    <span class="text-sm text-gray-600">Команда</span>
+                                </div>
+                            </div>
+                            <div class="flex mt-5 space-x-2">
+                                <button class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-lg font-medium flex-1">
+                                    Подробнее
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Documents Section -->
+            <section id="docs" class="section hidden p-5">
+                <div class="mt-2 mb-6">
+                    <h2 class="text-2xl font-bold text-dark mb-1">Документы</h2>
+                    <p class="text-gray-600">Ваши договоры, акты и документы для подписи</p>
+                </div>
+                
+                <div class="bg-gradient-to-r from-primary/10 to-accent/10 p-4 rounded-xl border border-primary/20">
+                    <div class="flex items-center">
+                        <div class="bg-white p-3 rounded-lg mr-3">
+                            <i class="fas fa-file-signature text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">Требуется ваша подпись</h3>
+                            <p class="text-sm mt-1">Один документ ожидает вашего подтверждения</p>
+                        </div>
+                    </div>
+                    <button class="mt-3 w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg font-medium">
+                        Перейти к подписанию
+                    </button>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="section-title text-xl font-bold text-dark mb-4 after:bg-primary">Ваши документы</h3>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow border border-gray-100">
+                        <div class="flex items-start">
+                            <div class="bg-primary/10 p-3 rounded-lg text-primary mr-3">
+                                <i class="far fa-file-pdf text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800">Договор № B4K-D-0458</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-2">
+                                    <i class="far fa-calendar mr-2"></i>
+                                    <span>Создан: 3 июня 2023</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-user-check mr-2"></i>
+                                    <span>Статус: подписан</span>
+                                </div>
+                                <div class="flex mt-4">
+                                    <button class="flex items-center text-primary">
+                                        <i class="fas fa-eye mr-1"></i>
+                                        <span>Просмотреть</span>
+                                    </button>
+                                    <button class="flex items-center text-gray-600 ml-5">
+                                        <i class="fas fa-download mr-1"></i>
+                                        <span>Скачать</span>
+                                    </button>
+                                    <button class="flex items-center text-gray-600 ml-5">
+                                        <i class="fas fa-share-alt mr-1"></i>
+                                        <span>Поделиться</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow border border-gray-100 mt-4">
+                        <div class="flex items-start">
+                            <div class="bg-danger/10 p-3 rounded-lg text-danger mr-3">
+                                <i class="far fa-file-word text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800">Акт выполненных работ № B4K-A-0987</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-2">
+                                    <i class="far fa-calendar mr-2"></i>
+                                    <span>Создан: 28 мая 2023</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-user-check mr-2"></i>
+                                    <span>Статус: подписан</span>
+                                </div>
+                                <div class="flex mt-4">
+                                    <button class="flex items-center text-primary">
+                                        <i class="fas fa-eye mr-1"></i>
+                                        <span>Просмотреть</span>
+                                    </button>
+                                    <button class="flex items-center text-gray-600 ml-5">
+                                        <i class="fas fa-download mr-1"></i>
+                                        <span>Скачать</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow border border-gray-100 mt-4">
+                        <div class="flex items-start">
+                            <div class="bg-success/10 p-3 rounded-lg text-success mr-3">
+                                <i class="far fa-file-pdf text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800">Договор № B4K-D-0411</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-2">
+                                    <i class="far fa-calendar mr-2"></i>
+                                    <span>Создан: 22 мая 2023</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-user-check mr-2"></i>
+                                    <span>Статус: подписан</span>
+                                </div>
+                                <div class="flex mt-4">
+                                    <button class="flex items-center text-primary">
+                                        <i class="fas fa-eye mr-1"></i>
+                                        <span>Просмотреть</span>
+                                    </button>
+                                    <button class="flex items-center text-gray-600 ml-5">
+                                        <i class="fas fa-download mr-1"></i>
+                                        <span>Скачать</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Floating Action Button -->
+        <button class="floating-action-button bg-gradient-to-r from-primary to-secondary shadow-lg">
+            <i class="fas fa-plus text-white text-xl"></i>
+        </button>
+        
+        <!-- Quick Action Menu -->
+        <div id="menuOverlay" class="fixed inset-0 bg-black/50 z-50 hidden">
+            <div class="fixed bottom-0 w-full max-w-md bg-white rounded-t-2xl p-5 transition-all">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Действия</h3>
+                    <button id="closeMenu" class="p-2">
+                        <i class="fas fa-times text-gray-500"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4">
+                    <button class="flex flex-col items-center p-2 rounded-lg hover:bg-gray-100">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-1">
+                            <i class="fas fa-calendar-plus text-xl"></i>
+                        </div>
+                        <span class="text-xs font-medium">Событие</span>
+                    </button>
+                    
+                    <button class="flex flex-col items-center p-2 rounded-lg hover:bg-gray-100">
+                        <div class="w-12 h-12 bg-danger/10 rounded-lg flex items-center justify-center text-danger mb-1">
+                            <i class="fas fa-file-contract text-xl"></i>
+                        </div>
+                        <span class="text-xs font-medium">Документ</span>
+                    </button>
+                    
+                    <button class="flex flex-col items-center p-2 rounded-lg hover:bg-gray-100">
+                        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center text-success mb-1">
+                            <i class="fas fa-chart-line text-xl"></i>
+                        </div>
+                        <span class="text-xs font-medium">Отчёт</span>
+                    </button>
+                    
+                    <button class="flex flex-col items-center p-2 rounded-lg hover:bg-gray-100">
+                        <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center text-accent mb-1">
+                            <i class="fas fa-question-circle text-xl"></i>
+                        </div>
+                        <span class="text-xs font-medium">Поддержка</span>
+                    </button>
+                    
+                    <button class="flex flex-col items-center p-2 rounded-lg hover:bg-gray-100">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary mb-1">
+                            <i class="fas fa-cog text-xl"></i>
+                        </div>
+                        <span class="text-xs font-medium">Настройки</span>
+                    </button>
+                    
+                    <button class="flex flex-col items-center p-2 rounded-lg hover:bg-gray-100">
+                        <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600 mb-1">
+                            <i class="fas fa-sign-out-alt text-xl"></i>
+                        </div>
+                        <span class="text-xs font-medium">Выход</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab navigation
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const sections = document.querySelectorAll('.section');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all tabs and sections
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('border-b-2', 'border-white', 'active-tab');
+                        btn.classList.add('border-transparent');
+                    });
+                    
+                    sections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    
+                    // Add active class to current tab and show corresponding section
+                    this.classList.add('border-b-2', 'border-white', 'active-tab');
+                    this.classList.remove('border-transparent');
+                    
+                    const targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).classList.remove('hidden');
+                });
+            });
+            
+            // Menu toggle
+            const menuButton = document.getElementById('menuButton');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const closeMenu = document.getElementById('closeMenu');
+            
+            menuButton.addEventListener('click', function() {
+                menuOverlay.classList.remove('hidden');
+            });
+            
+            closeMenu.addEventListener('click', function() {
+                menuOverlay.classList.add('hidden');
+            });
+            
+            menuOverlay.addEventListener('click', function(e) {
+                if(e.target === menuOverlay) {
+                    menuOverlay.classList.add('hidden');
+                }
+            });
+            
+            // Make home tab active by default
+            document.querySelector('.tab-button[data-target="home"]').click();
+            
+            // Event cards interactive effect
+            const eventCards = document.querySelectorAll('.event-card');
+            eventCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('hover:shadow-md');
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('hover:shadow-md');
+                });
+            });
+        });
+    </script>
+</body>
 </html>
